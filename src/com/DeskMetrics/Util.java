@@ -20,7 +20,8 @@ import java.util.List;
 public class Util {
     protected static String getMD5(String toEncode)
     {
-        try {
+        try
+        {
             MessageDigest md;
             md = MessageDigest.getInstance("MD5");
             md.update(toEncode.getBytes());

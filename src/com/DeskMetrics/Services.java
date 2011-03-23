@@ -6,4 +6,8 @@ package com.DeskMetrics;
  */
 public class Services {
 
+    protected static void sendDataToUrl(String data, String toUrl)
+    {
+        
+    }
 }

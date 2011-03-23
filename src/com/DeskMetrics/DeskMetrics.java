@@ -22,8 +22,9 @@ public class DeskMetrics {
     private static long totalDiskSpace;
     private static String appID;
     private static String sessionID;
+    private static int flow=0;
 
-    public static void Start(String appID,String appVersion) throws IOException, NoSuchAlgorithmException
+    public static void start(String appID,String appVersion) throws IOException, NoSuchAlgorithmException
     {
         DeskMetrics.appID = appID;
         Hashtable<String,Object> startApp = new Hashtable<String,Object>();
@@ -56,7 +57,21 @@ public class DeskMetrics {
         Events.add(Util.getJSONFromHashtable(startApp));
     }
 
-    public static void Stop()
+    public static void trackEvent(String category,String name)
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+
+        hash.put("tp", "ev");
+        hash.put("ca", category);
+        hash.put("nm", name);
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        hash.put("fl", flow);
+        flow ++;
+        Events.add(Util.getJSONFromHashtable(hash));
+    }
+
+    public static void stop()
     {
         Hashtable stApp = new Hashtable();
         stApp.put("tp", "stApp");
@@ -64,6 +79,8 @@ public class DeskMetrics {
         stApp.put("ss", getSessionID());
 
         Events.add(Util.getJSONFromHashtable(stApp));
+
+        Services.sendDataToUrl(Util.getJSONFromJSONList(Events), "http://"+appID+"api.deskmetrics.com");
     }
 
     private static String getUserID() throws IOException,NoSuchAlgorithmException
@@ -116,6 +133,5 @@ public class DeskMetrics {
         String height = String.valueOf(t.getScreenSize().getHeight()).split(".")[0];
         return width+"x"+height;
     }
-
-
+    
 }
