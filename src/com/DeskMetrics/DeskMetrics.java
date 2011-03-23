@@ -5,10 +5,8 @@
 
 package com.DeskMetrics;
 
-import com.sun.management.OperatingSystemMXBean;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.awt.Toolkit;
@@ -17,11 +15,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -32,16 +25,19 @@ public class DeskMetrics {
     private static List<String> Events;
     private static long freeDiskSpace;
     private static long totalDiskSpace;
+    private static String appID;
+    private static String sessionID;
 
     public static void Start(String appID,String appVersion) throws IOException, NoSuchAlgorithmException
     {
+        DeskMetrics.appID = appID;
         Hashtable<String,Object> startApp = new Hashtable<String,Object>();
 
         startApp.put("tp", "strApp");
-        startApp.put("aver", "4.5");
+        startApp.put("aver", appVersion);
         startApp.put("ID", getUserID());
         startApp.put("ss", getSessionID());
-        startApp.put("ts", getCurrentTimeStamp());
+        startApp.put("ts", Util.getCurrentTimeStamp());
         startApp.put("osv", System.getProperty("os.name"));
         startApp.put("ossp", "null");
         startApp.put("osar", System.getProperty("os.arch"));
@@ -62,12 +58,23 @@ public class DeskMetrics {
         startApp.put("dfr", freeDiskSpace);
 
         
-        Events.add(getJSONFromHashtable(startApp));
+        Events.add(Util.getJSONFromHashtable(startApp));
     }
 
-    private static String getUserID() throws IOException, NoSuchAlgorithmException
+    public static void Stop()
     {
-        String filename = System.getProperty("user.home")+System.getProperty("file.separator")+".deskmetrics";
+        Hashtable stApp = new Hashtable();
+        stApp.put("tp", "stApp");
+        stApp.put("ts", String.valueOf(Util.getCurrentTimeStamp()));
+        stApp.put("ss", getSessionID());
+
+        Events.add(Util.getJSONFromHashtable(stApp));
+    }
+
+    private static String getUserID() throws IOException,NoSuchAlgorithmException
+    {
+        String filename = System.getProperty("user.home")+
+                System.getProperty("file.separator")+".deskmetrics";
         File file = new File(filename);
 
         String userID = "";
@@ -83,7 +90,7 @@ public class DeskMetrics {
         {
             file.createNewFile();
             BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file));
-            userID = getMD5(String.valueOf(getCurrentTimeStamp()));
+            userID = Util.getMD5(String.valueOf(Util.getCurrentTimeStamp()));
             fileWriter.write(userID);
         }
 
@@ -92,12 +99,9 @@ public class DeskMetrics {
 
     private static String getSessionID()
     {
-        return getMD5(String.valueOf(getCurrentTimeStamp()));
-    }
-
-    private static int getCurrentTimeStamp()
-    {
-        return (int) (new Date().getTime() / 1000);
+        if (sessionID==null)
+            sessionID = Util.getMD5(String.valueOf(Util.getCurrentTimeStamp()));
+        return sessionID;
     }
 
     private static String getDotNetVersion()
@@ -118,49 +122,5 @@ public class DeskMetrics {
         return width+"x"+height;
     }
 
-    private static String getMD5(String toEncode)
-    {
-        try {
-            MessageDigest md;
-            md = MessageDigest.getInstance("MD5");
-            md.update(toEncode.getBytes());
-            BigInteger hash = new BigInteger(1, md.digest());
-            return hash.toString(16);
-        } catch (NoSuchAlgorithmException ex) {
-            return "";
-        }
-    }
 
-    private static String getJSONFromHashtable(Hashtable hash)
-    {
-        Enumeration elements = hash.elements();
-        String json = "{";
-        
-        while(elements.hasMoreElements())
-        {
-            Object e = elements.nextElement();
-            if (hash.get(e) == null)
-            {
-                json += "\""+e.toString()+":null,";
-                continue;
-            }
-
-            try
-            {
-                Long valueOf = Long.valueOf(hash.get(e).toString());
-                json += "\""+e.toString()+"\":"+String.valueOf(valueOf)+",";
-            }
-            catch(NumberFormatException ex)
-            {
-                //it is not an integer, but a string.
-                json += "\""+e.toString()+"\":\""+hash.get(e).toString()+"\",";
-            }
-        }
-
-        json = json.substring(0, json.length()-1);
-        json += "}";
-        
-        return json;
-    }
-    
 }
