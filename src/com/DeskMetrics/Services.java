@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.DeskMetrics;
 
 /**
  *
- * @author herberth
+ * @author Herberth Amaral (http://github.com/herberthamaral)
  */
 public class Services {
 

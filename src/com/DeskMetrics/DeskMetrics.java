@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.DeskMetrics;
 
 import java.io.IOException;
@@ -18,7 +13,7 @@ import java.io.FileWriter;
 
 /**
  *
- * @author herberth
+ * @author Herberth Amaral (http://github.com/herberthamaral)
  */
 public class DeskMetrics {
 

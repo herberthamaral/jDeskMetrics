@@ -11,10 +11,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  *
- * @author herberth
+ * @author Herberth Amaral (http://github.com/herberthamaral)
  */
 public class Util {
     protected static String getMD5(String toEncode)
@@ -64,6 +65,20 @@ public class Util {
         json = json.substring(0, json.length()-1);
         json += "}";
 
+        return json;
+    }
+
+    protected static String getJSONFromJSONList(List<String> jsonList)
+    {
+        String json = "[";
+        
+        for(String s:jsonList)
+        {
+            json += s+",";
+        }
+
+        json = json.substring(0, json.length()-1);
+        json += "]";
         return json;
     }
 }
