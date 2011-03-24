@@ -1,5 +1,6 @@
 package com.DeskMetrics;
 
+import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
@@ -10,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Vector;
 
 /**
  *
@@ -17,7 +19,7 @@ import java.io.FileWriter;
  */
 public class DeskMetrics {
 
-    private static List<String> Events;
+    private static List<String> Events = new Vector<String>();;
     private static long freeDiskSpace;
     private static long totalDiskSpace;
     private static String appID;
@@ -42,9 +44,9 @@ public class DeskMetrics {
         startApp.put("oslng", 1046);
         startApp.put("osscn", getScreenResolution());
         startApp.put("ccr", Runtime.getRuntime().availableProcessors());
-        startApp.put("cbr", null);
-        startApp.put("cnm", null);
-        startApp.put("car", null);
+        startApp.put("cbr", "null");
+        startApp.put("cnm", "null");
+        startApp.put("car", "null");
 
         com.sun.management.OperatingSystemMXBean osbean = (com.sun.management.OperatingSystemMXBean) java.lang.management.ManagementFactory.getOperatingSystemMXBean();
 
@@ -68,10 +70,11 @@ public class DeskMetrics {
         hash.put("ss", getSessionID());
         hash.put("fl", flow);
         flow ++;
-        Events.add(Util.getJSONFromHashtable(hash));
+        String json = Util.getJSONFromHashtable(hash);
+        Events.add(json);
     }
 
-    public static void stop()
+    public static void stop() throws Exception
     {
         Hashtable stApp = new Hashtable();
         stApp.put("tp", "stApp");
@@ -80,7 +83,7 @@ public class DeskMetrics {
 
         Events.add(Util.getJSONFromHashtable(stApp));
 
-        Services.sendDataToUrl(Util.getJSONFromJSONList(Events), "http://"+appID+"api.deskmetrics.com");
+        Services.sendDataToUrl(Util.getJSONFromJSONList(Events), "http://"+appID+".api.deskmetrics.com/sendData");
     }
 
     private static String getUserID() throws IOException,NoSuchAlgorithmException
@@ -104,6 +107,7 @@ public class DeskMetrics {
             BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file));
             userID = Util.getMD5(String.valueOf(Util.getCurrentTimeStamp()));
             fileWriter.write(userID);
+            fileWriter.close();
         }
 
         return userID;
@@ -118,19 +122,29 @@ public class DeskMetrics {
 
     private static String getDotNetVersion()
     {
-        return null;
+        return "null";
     }
 
     private static String getDotNetServicePack()
     {
-        return null;
+        return "null";
     }
 
     private static String getScreenResolution()
     {
-        Toolkit t = Toolkit.getDefaultToolkit();
-        String width = String.valueOf(t.getScreenSize().getWidth()).split(".")[0];
-        String height = String.valueOf(t.getScreenSize().getHeight()).split(".")[0];
+        Toolkit t = null;//Toolkit.getDefaultToolkit();
+        try
+        {
+            t = Toolkit.getDefaultToolkit();
+        }catch(Exception e){}
+        
+        String width = String.valueOf(t.getScreenSize().getWidth());
+        String height = String.valueOf(t.getScreenSize().getHeight());
+
+        width = width.substring(0, width.indexOf("."));
+        height = height.substring(0, height.indexOf("."));
+
+        
         return width+"x"+height;
     }
     

@@ -39,15 +39,16 @@ public class Util {
 
     protected static String getJSONFromHashtable(Hashtable hash)
     {
-        Enumeration elements = hash.elements();
+        Enumeration keys = hash.keys();
         String json = "{";
 
-        while(elements.hasMoreElements())
+        while(keys.hasMoreElements())
         {
-            Object e = elements.nextElement();
+            Object e = keys.nextElement();
+            
             if (hash.get(e) == null)
             {
-                json += "\""+e.toString()+":null,";
+                json += "\""+e.toString()+"\":null,";
                 continue;
             }
 
@@ -58,8 +59,15 @@ public class Util {
             }
             catch(NumberFormatException ex)
             {
+                if (hash.get(e).toString()=="null")
+                {
+                    json += "\""+e.toString()+"\":null,";
+                }
+                else
+                {
                 //it is not an integer, but a string.
                 json += "\""+e.toString()+"\":\""+hash.get(e).toString()+"\",";
+                }
             }
         }
 

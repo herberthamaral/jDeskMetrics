@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
  * @author herberth
  */
 public class Main {
-    public static void main(String[] args) throws IOException, NoSuchAlgorithmException
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException, Exception
     {
         DeskMetrics.start("4d47c012d9340b116a000000", "0.5");
         System.out.println("Application started");
