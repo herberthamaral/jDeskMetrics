@@ -22,13 +22,15 @@ public class DeskMetrics {
     private static List<String> Events = new Vector<String>();;
     private static long freeDiskSpace;
     private static long totalDiskSpace;
-    private static String appID;
+    private static String appID,appVersion;
     private static String sessionID;
     private static int flow=0;
+    private static String url = "";
 
     public static void start(String appID,String appVersion) throws IOException, NoSuchAlgorithmException
     {
         DeskMetrics.appID = appID;
+        DeskMetrics.appVersion = appVersion;
         Hashtable<String,Object> startApp = new Hashtable<String,Object>();
 
         startApp.put("tp", "strApp");
@@ -57,6 +59,8 @@ public class DeskMetrics {
 
         
         Events.add(Util.getJSONFromHashtable(startApp));
+
+        url = "http://"+appID+".api.deskmetrics.com/sendData";
     }
 
     public static void trackEvent(String category,String name)
@@ -74,6 +78,111 @@ public class DeskMetrics {
         Events.add(json);
     }
 
+    public static void trackEventValue(String category, String name, String value)
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+
+        hash.put("tp", "evV");
+        hash.put("ca", category);
+        hash.put("nm", name);
+        hash.put("vl", value);
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        hash.put("fl", flow);
+        flow ++;
+        String json = Util.getJSONFromHashtable(hash);
+        Events.add(json);
+    }
+
+    public static void trackCustomData(String name, String value)
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+
+        hash.put("tp", "ctD");
+        hash.put("nm", name);
+        hash.put("vl", value);
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        hash.put("fl", flow);
+        flow ++;
+        String json = Util.getJSONFromHashtable(hash);
+        Events.add(json);
+    }
+
+    public static void trackCustomDataR(String name, String value) throws Exception
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+
+        hash.put("tp", "ctDR");
+        hash.put("nm", name);
+        hash.put("vl", value);
+        hash.put("aver", appVersion);
+        hash.put("ID", getUserID());
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        hash.put("fl", flow);
+        flow ++;
+        String json = Util.getJSONFromHashtable(hash);
+
+        Services.sendDataToUrl(json, url);
+    }
+
+    public static void trackInstall(String version,String appID) throws Exception
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+        hash.put("tp", "ist");
+        hash.put("ID", getUserID());
+        hash.put("aver", version);
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        String json = Util.getJSONFromHashtable(hash);
+
+        Services.sendDataToUrl(json, "http://"+appID+".api.deskmetrics.com/sendData");
+    }
+
+    public static void trackUninstall(String version,String appID) throws Exception
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+        hash.put("tp", "ust");
+        hash.put("ID", getUserID());
+        hash.put("aver", version);
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        String json = Util.getJSONFromHashtable(hash);
+
+        Services.sendDataToUrl(json, "http://"+appID+".api.deskmetrics.com/sendData");
+    }
+
+    public static void trackLog(String message)
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+        hash.put("tp", "lg");
+        hash.put("ms", message);
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        hash.put("fl", flow);
+        flow ++;
+        String json = Util.getJSONFromHashtable(hash);
+        Events.add(json);
+    }
+
+    public static void trackEventTimed(String category, String name, int time, boolean finished)
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+
+        hash.put("tp", "evP");
+        hash.put("ca", category);
+        hash.put("nm", name);
+        hash.put("ec", finished?"1":"0");
+        hash.put("tm", String.valueOf(time));
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        hash.put("fl", flow);
+        flow ++;
+        String json = Util.getJSONFromHashtable(hash);
+        Events.add(json);
+    }
+
     public static void stop() throws Exception
     {
         Hashtable stApp = new Hashtable();
@@ -83,7 +192,7 @@ public class DeskMetrics {
 
         Events.add(Util.getJSONFromHashtable(stApp));
 
-        Services.sendDataToUrl(Util.getJSONFromJSONList(Events), "http://"+appID+".api.deskmetrics.com/sendData");
+        Services.sendDataToUrl(Util.getJSONFromJSONList(Events), url);
     }
 
     private static String getUserID() throws IOException,NoSuchAlgorithmException

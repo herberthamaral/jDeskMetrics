@@ -22,6 +22,16 @@ public class Main {
         DeskMetrics.trackEvent("jDeskMetrics", "automatedTest2");
         DeskMetrics.trackEvent("jDeskMetrics", "automatedTest3");
         System.out.println("Added some events");
+
+        DeskMetrics.trackCustomData("CustomJavaData", "CustomDataValue");
+        DeskMetrics.trackCustomDataR("CustomJavaDataR", "CustomDataValueR");
+
+        DeskMetrics.trackInstall("4.2","4d47c012d9340b116a000000");
+        DeskMetrics.trackUninstall("4.2","4d47c012d9340b116a000000");
+
+        DeskMetrics.trackEventTimed("jDeskMetrics", "jTimed", 30, true);
+        DeskMetrics.trackLog("jDeskMetrics send a log ;)");
+
         DeskMetrics.stop();
         System.out.println("Application finished");
     }
