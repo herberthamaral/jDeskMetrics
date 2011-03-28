@@ -17,8 +17,9 @@ public class Main {
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException, Exception
     {
         DeskMetrics deskmetrics = DeskMetrics.getInstance();
+        String appID = "4d47c012d9340b116a000000";
 
-        deskmetrics.start("4d47c012d9340b116a000000", "0.5");
+        deskmetrics.start(appID, "0.5");
         System.out.println("Application started");
         deskmetrics.trackEvent("jDeskMetrics", "automatedTest1");
         deskmetrics.trackEvent("jDeskMetrics", "automatedTest2");
@@ -28,10 +29,11 @@ public class Main {
         deskmetrics.trackCustomData("CustomJavaData", "CustomDataValue");
         deskmetrics.trackCustomDataR("CustomJavaDataR", "CustomDataValueR");
 
-        deskmetrics.trackInstall("4.2","4d47c012d9340b116a000000");
-        deskmetrics.trackUninstall("4.2","4d47c012d9340b116a000000");
+        deskmetrics.trackInstall("4.2",appID);
+        deskmetrics.trackUninstall("4.2",appID);
 
         deskmetrics.trackEventTimed("jDeskMetrics", "jTimed", 30, true);
+        deskmetrics.trackEventTimed("jDeskMetrics", "jTimed", 20, false);
         deskmetrics.trackLog("jDeskMetrics send a log ;)");
         deskmetrics.trackException(new Exception("Oops, got an error in jDeskMetrics"));
 
