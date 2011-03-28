@@ -31,6 +31,7 @@ public class Main {
 
         DeskMetrics.trackEventTimed("jDeskMetrics", "jTimed", 30, true);
         DeskMetrics.trackLog("jDeskMetrics send a log ;)");
+        DeskMetrics.trackException(new Exception("Oops, got an error in jDeskMetrics"));
 
         DeskMetrics.stop();
         System.out.println("Application finished");

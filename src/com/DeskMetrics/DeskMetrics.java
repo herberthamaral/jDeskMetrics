@@ -183,6 +183,28 @@ public class DeskMetrics {
         Events.add(json);
     }
 
+    public static void trackException(Exception e)
+    {
+        Hashtable<String,Object> hash = new Hashtable<String, Object>();
+
+        hash.put("tp", "exC");
+        hash.put("msg", e.getMessage().replaceAll("\n", " ").replaceAll("\r", " "));
+        
+        String stackTrace = "";
+        for (StackTraceElement element:e.getStackTrace())
+        {
+            stackTrace += element.toString().replaceAll("\n", " ").replace("\r", " ");
+        }
+
+        hash.put("stk", stackTrace);
+        hash.put("ts", Util.getCurrentTimeStamp());
+        hash.put("ss", getSessionID());
+        hash.put("fl", flow);
+        flow ++;
+        String json = Util.getJSONFromHashtable(hash);
+        Events.add(json);
+    }
+
     public static void stop() throws Exception
     {
         Hashtable stApp = new Hashtable();
