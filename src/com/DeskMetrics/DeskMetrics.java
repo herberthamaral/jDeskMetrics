@@ -29,9 +29,52 @@ public class DeskMetrics {
 
     private static DeskMetrics instance;
 
+    private Hashtable<String,Integer> languageCodes;
+
     private DeskMetrics()
     {
+        languageCodes = new Hashtable<String, Integer>();
 
+        languageCodes.put("ja", 1041);
+        languageCodes.put("es", 1034);
+        languageCodes.put("en", 1033);
+        languageCodes.put("sr", 2074); //TODO: make distinction from latin and cyrilic
+        languageCodes.put("mk", 1071);
+        languageCodes.put("mk", 1071);
+        languageCodes.put("no", 1044);
+        languageCodes.put("sq", 1052);
+        languageCodes.put("sq", 1052);
+        languageCodes.put("bg", 1026);
+        languageCodes.put("hu", 1038);
+        languageCodes.put("pt", 1036);
+        languageCodes.put("pt", 1036);
+        languageCodes.put("sv", 1053);
+        languageCodes.put("de", 1031);
+        languageCodes.put("fi", 1035);
+        languageCodes.put("is", 1039);
+        languageCodes.put("cs", 1029);
+        languageCodes.put("sl", 1060);
+        languageCodes.put("sk", 1051);
+        languageCodes.put("it", 1040);
+        languageCodes.put("tr", 1055);
+        languageCodes.put("th", 1054);
+        languageCodes.put("ro", 2072);
+        languageCodes.put("fr", 1036);
+        languageCodes.put("ko", 1042);
+        languageCodes.put("et", 1061);
+        languageCodes.put("ru", 1049);
+        languageCodes.put("lv", 1062);
+        languageCodes.put("lv", 1062);
+        languageCodes.put("hr", 1050);
+        languageCodes.put("hi", 1081);
+        languageCodes.put("be", 1059);
+        languageCodes.put("ca", 1027);
+        languageCodes.put("uk", 1058);
+        languageCodes.put("pl", 1045);
+        languageCodes.put("vi", 1066);
+        languageCodes.put("mt", 1082);
+        languageCodes.put("ms", 1086);
+        languageCodes.put("da", 1030);
     }
 
     public static DeskMetrics getInstance()
@@ -60,7 +103,7 @@ public class DeskMetrics {
         startApp.put("osar", System.getProperty("os.arch"));
         startApp.put("osjv", System.getProperty("java.version"));
         startApp.put("osnet", getDotNetVersion());
-        startApp.put("oslng", 1046);
+        startApp.put("oslng", languageCodes.get(java.util.Locale.getDefault().getLanguage()).toString());
         startApp.put("osscn", getScreenResolution());
         startApp.put("ccr", Runtime.getRuntime().availableProcessors());
         startApp.put("cbr", "null");
