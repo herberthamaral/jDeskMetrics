@@ -19,19 +19,36 @@ import java.util.Vector;
  */
 public class DeskMetrics {
 
-    private static List<String> Events = new Vector<String>();;
-    private static long freeDiskSpace;
-    private static long totalDiskSpace;
-    private static String appID,appVersion;
-    private static String sessionID;
-    private static int flow=0;
-    private static String url = "";
+    private  List<String> Events = new Vector<String>();;
+    private  long freeDiskSpace;
+    private  long totalDiskSpace;
+    private  String appID,appVersion;
+    private  String sessionID;
+    private  int flow=0;
+    private  String url = "";
 
-    public static void start(String appID,String appVersion) throws IOException, NoSuchAlgorithmException
+    private static DeskMetrics instance;
+
+    private DeskMetrics()
     {
-        DeskMetrics.appID = appID;
-        DeskMetrics.appVersion = appVersion;
+
+    }
+
+    public static DeskMetrics getInstance()
+    {
+        if (instance==null)
+            instance = new DeskMetrics();
+
+        return instance;
+    }
+
+    public  void start(String appID,String appVersion) throws IOException, NoSuchAlgorithmException
+    {
+        this.appID = appID;
+        this.appVersion = appVersion;
         Hashtable<String,Object> startApp = new Hashtable<String,Object>();
+
+
 
         startApp.put("tp", "strApp");
         startApp.put("aver", appVersion);
@@ -63,7 +80,7 @@ public class DeskMetrics {
         url = "http://"+appID+".api.deskmetrics.com/sendData";
     }
 
-    public static void trackEvent(String category,String name)
+    public void trackEvent(String category,String name)
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
 
@@ -78,7 +95,7 @@ public class DeskMetrics {
         Events.add(json);
     }
 
-    public static void trackEventValue(String category, String name, String value)
+    public  void trackEventValue(String category, String name, String value)
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
 
@@ -94,7 +111,7 @@ public class DeskMetrics {
         Events.add(json);
     }
 
-    public static void trackCustomData(String name, String value)
+    public  void trackCustomData(String name, String value)
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
 
@@ -109,7 +126,7 @@ public class DeskMetrics {
         Events.add(json);
     }
 
-    public static void trackCustomDataR(String name, String value) throws Exception
+    public  void trackCustomDataR(String name, String value) throws Exception
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
 
@@ -127,7 +144,7 @@ public class DeskMetrics {
         Services.sendDataToUrl(json, url);
     }
 
-    public static void trackInstall(String version,String appID) throws Exception
+    public  void trackInstall(String version,String appID) throws Exception
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
         hash.put("tp", "ist");
@@ -140,7 +157,7 @@ public class DeskMetrics {
         Services.sendDataToUrl(json, "http://"+appID+".api.deskmetrics.com/sendData");
     }
 
-    public static void trackUninstall(String version,String appID) throws Exception
+    public  void trackUninstall(String version,String appID) throws Exception
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
         hash.put("tp", "ust");
@@ -153,7 +170,7 @@ public class DeskMetrics {
         Services.sendDataToUrl(json, "http://"+appID+".api.deskmetrics.com/sendData");
     }
 
-    public static void trackLog(String message)
+    public  void trackLog(String message)
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
         hash.put("tp", "lg");
@@ -166,7 +183,7 @@ public class DeskMetrics {
         Events.add(json);
     }
 
-    public static void trackEventTimed(String category, String name, int time, boolean finished)
+    public  void trackEventTimed(String category, String name, int time, boolean finished)
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
 
@@ -183,7 +200,7 @@ public class DeskMetrics {
         Events.add(json);
     }
 
-    public static void trackException(Exception e)
+    public  void trackException(Exception e)
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
 
@@ -205,7 +222,7 @@ public class DeskMetrics {
         Events.add(json);
     }
 
-    public static void stop() throws Exception
+    public  void stop() throws Exception
     {
         Hashtable stApp = new Hashtable();
         stApp.put("tp", "stApp");
@@ -217,7 +234,7 @@ public class DeskMetrics {
         Services.sendDataToUrl(Util.getJSONFromJSONList(Events), url);
     }
 
-    private static String getUserID() throws IOException,NoSuchAlgorithmException
+    private  String getUserID() throws IOException,NoSuchAlgorithmException
     {
         String filename = System.getProperty("user.home")+
                 System.getProperty("file.separator")+".deskmetrics";
@@ -244,24 +261,24 @@ public class DeskMetrics {
         return userID;
     }
 
-    private static String getSessionID()
+    private  String getSessionID()
     {
         if (sessionID==null)
             sessionID = Util.getMD5(String.valueOf(Util.getCurrentTimeStamp()));
         return sessionID;
     }
 
-    private static String getDotNetVersion()
+    private  String getDotNetVersion()
     {
         return "null";
     }
 
-    private static String getDotNetServicePack()
+    private  String getDotNetServicePack()
     {
         return "null";
     }
 
-    private static String getScreenResolution()
+    private  String getScreenResolution()
     {
         Toolkit t = null;//Toolkit.getDefaultToolkit();
         try
