@@ -213,7 +213,7 @@ public class DeskMetrics {
         Services.sendDataToUrl(json, "http://"+appID+".api.deskmetrics.com/sendData");
     }
 
-    public  void trackLog(String message)
+    public void trackLog(String message)
     {
         Hashtable<String,Object> hash = new Hashtable<String, Object>();
         hash.put("tp", "lg");
